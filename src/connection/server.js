@@ -25,9 +25,6 @@ const User = mongoose.model('User', userSchema);
 app.post('/api/signin', async (req, res) => {
     const { email, password } = req.body;
     try {
-        if(password.length < 8) {
-            res.status(401).json({ message: 'password too short' });
-        }
         const user = await User.findOne({ email, password });
         if (!user) {
             res.status(401).json({ message: 'Invalid email or password' });
