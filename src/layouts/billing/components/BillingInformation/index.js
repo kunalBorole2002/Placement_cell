@@ -18,6 +18,7 @@ function CompanyInformation() {
     const [name, setName] = useState("");
     const [location, setLocation] = useState("");
     const [date, setDate] = useState("");
+    const [min_marks, setMin_marks] = useState("");
     const [cpackage, setPackage] = useState("");
     const status = "active";
 
@@ -44,6 +45,7 @@ function CompanyInformation() {
                     setLocation("");
                     setDate("");
                     setPackage("");
+                    setMin_marks("");
                     setShowForm(false);
                 }
             })
@@ -55,6 +57,7 @@ function CompanyInformation() {
         setLocation("");
         setDate("");
         setPackage("");
+        setMin_marks("");
         setShowForm(false);
     };
 
@@ -76,6 +79,7 @@ function CompanyInformation() {
                             <SoftInput required fullWidth placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
                             <SoftInput required fullWidth placeholder="Date" value={date} onChange={(e) => setDate(e.target.value)} />
                             <SoftInput required fullWidth placeholder="Package" value={cpackage} onChange={(e) => setPackage(e.target.value)} />
+                            <SoftInput required fullWidth placeholder="Minimum Marks" value={min_marks} onChange={(e) => setMin_marks(e.target.value)} />
                             <SoftBox sx={{ display: "flex", justifyContent: "space-between" }}>
                                 <SoftButton color="primary" circular="true" variant="gradient" type="submit">
                                     Submit
@@ -97,6 +101,7 @@ function CompanyInformation() {
                             name={company.name}
                             company={company.cpackage}
                             email={company.location}
+                            min_marks = {company.min_marks}
                             vat={company.date}
                         />
                     ))}

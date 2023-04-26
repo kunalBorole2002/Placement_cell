@@ -26,9 +26,9 @@ const routes = [
     noCollapse: true,
   },  {
     type: "collapse",
-    name: "Studentdashboard",
+    name: "Companies",
     key: "studentdashboard",
-    route: "/studentdashboard",
+    route: "/studentBilling",
     icon: <Shop size="12px" />,
     component: <Studentbilling />,
     noCollapse: true,

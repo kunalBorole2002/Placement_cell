@@ -29,7 +29,7 @@ import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 // Soft UI Dashboard React context
 import { useSoftUIController, setMiniSidenav } from "context";
 
-function Sidenav({ color, brand, brandName, routes, ...rest }) {
+function Sidenav({ color, brand, brandName, routes, user, ...rest }) {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, transparentSidenav } = controller;
   const location = useLocation();
@@ -59,59 +59,82 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, route, href }) => {
     let returnValue;
+    console.log("user",user);
+    // check if the user is logged in as an admin
+    let isAdmin = false;
+    let isStudent = false;
+    if (user === 'admin') {
+      isAdmin = true;
+    }else if (user === 'student') {
+      isStudent = true;
+    }
+    console.log("admin or student ",isAdmin,isStudent);
 
     if (type === "collapse") {
+      // if the link is Studentbilling and the user is an admin, hide the link
+      if (key === 'studentdashboard' && isAdmin) {
+        return null;
+      }
+
+      // if the link is Dashboard and the user is a student, hide the link
+      if ( name === 'Dashboard' && isStudent) {
+        return null;
+      }
+      if ( key === 'billing' && isStudent) {
+        return null;
+      }
+
       returnValue = href ? (
-        <Link
-          href={href}
-          key={key}
-          target="_blank"
-          rel="noreferrer"
-          sx={{ textDecoration: "none" }}
-        >
-          <SidenavCollapse
-            color={color}
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
-        </Link>
+          <Link
+              href={href}
+              key={key}
+              target="_blank"
+              rel="noreferrer"
+              sx={{ textDecoration: "none" }}
+          >
+            <SidenavCollapse
+                color={color}
+                name={name}
+                icon={icon}
+                active={key === collapseName}
+                noCollapse={noCollapse}
+            />
+          </Link>
       ) : (
-        <NavLink to={route} key={key}>
-          <SidenavCollapse
-            color={color}
-            key={key}
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
-        </NavLink>
+          <NavLink to={route} key={key}>
+            <SidenavCollapse
+                color={color}
+                key={key}
+                name={name}
+                icon={icon}
+                active={key === collapseName}
+                noCollapse={noCollapse}
+            />
+          </NavLink>
       );
     } else if (type === "title") {
       returnValue = (
-        <SoftTypography
-          key={key}
-          display="block"
-          variant="caption"
-          fontWeight="bold"
-          textTransform="uppercase"
-          opacity={0.6}
-          pl={3}
-          mt={2}
-          mb={1}
-          ml={1}
-        >
-          {title}
-        </SoftTypography>
+          <SoftTypography
+              key={key}
+              display="block"
+              variant="caption"
+              fontWeight="bold"
+              textTransform="uppercase"
+              opacity={0.6}
+              pl={3}
+              mt={2}
+              mb={1}
+              ml={1}
+          >
+            {title}
+          </SoftTypography>
       );
     } else if (type === "divider") {
       returnValue = <Divider key={key} />;
     }
 
     return returnValue;
-  });
+  }).filter(Boolean);
 
   return (
     <SidenavRoot {...rest} variant="permanent" ownerState={{ transparentSidenav, miniSidenav }}>
@@ -170,6 +193,7 @@ Sidenav.defaultProps = {
 
 // Typechecking props for the Sidenav
 Sidenav.propTypes = {
+  user: PropTypes.string,
   color: PropTypes.oneOf(["info", "secondary", "primary", "success", "warning", "error", "dark"]),
   brand: PropTypes.string,
   brandName: PropTypes.string.isRequired,

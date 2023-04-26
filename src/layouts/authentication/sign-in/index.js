@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import Switch from "@mui/material/Switch";
 import SoftBox from "components/SoftBox";
@@ -13,6 +13,18 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [usertype, setUser] = useState();
+
+  // Fetch the user type from the server
+  useEffect(() => {
+    async function fetchUserType() {
+      const response = await fetch('http://localhost:3001/api/usertype');
+      const data = await response.json();
+      setUser(data.userType);
+    }
+    fetchUserType();
+  }, []);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -32,7 +44,13 @@ function SignIn() {
       } else {
         // Check if the fetched user's email and password matches with the provided email and password
         if (user.email === email && user.password === password) {
-          window.location.href = "/dashboard";
+          console.log("login",usertype);
+          if (usertype==="admin") {
+            window.location.href = "/dashboard";
+          }else if (usertype==="student"){
+            window.location.href = "/studentBilling";
+          }
+
         } else {
           setErrorMessage("Invalid email or password");
         }

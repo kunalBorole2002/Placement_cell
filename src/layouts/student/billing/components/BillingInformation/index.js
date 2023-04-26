@@ -13,7 +13,7 @@ function CompanyInformation() {
     const [companies, setCompanies] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:3001/api/companies")
+        fetch("http://localhost:3001/api/activecompanies")
             .then((res) => res.json())
             .then((data) => setCompanies(data))
             .catch((error) => console.error(error));
@@ -30,10 +30,12 @@ function CompanyInformation() {
                 <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
                     {companies.map((company) => (
                         <Bill
-                            key={company.id}
+                            key={company._id}
+                            id = {company._id}
                             name={company.name}
-                            company={company.package}
+                            company={company.cpackage}
                             email={company.location}
+                            min_marks={company.min_marks}
                             vat={company.date}
                         />
                     ))}

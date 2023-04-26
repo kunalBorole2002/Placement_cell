@@ -9,7 +9,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
 
 // Soft UI Dashboard React components
-import SoftBox from "components/SoftBox";
 
 // Soft UI Dashboard React examples
 import Sidenav from "examples/Sidenav";
@@ -17,11 +16,9 @@ import Configurator from "examples/Configurator";
 
 // Soft UI Dashboard React themes
 import theme from "assets/theme";
-import themeRTL from "assets/theme/theme-rtl";
 
 // RTL plugins
 import rtlPlugin from "stylis-plugin-rtl";
-import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 // Soft UI Dashboard React routes
@@ -67,9 +64,7 @@ export default function App() {
   };
 
   // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-
-  // Setting the dir attribute for the body element
+// Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", direction);
   }, [direction]);
@@ -92,30 +87,20 @@ export default function App() {
 
       return null;
     });
+  const [user, setUser] = useState();
 
-  const configsButton = (
-    <SoftBox
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="3.5rem"
-      height="3.5rem"
-      bgColor="white"
-      shadow="sm"
-      borderRadius="50%"
-      position="fixed"
-      right="2rem"
-      bottom="2rem"
-      zIndex={99}
-      color="dark"
-      sx={{ cursor: "pointer" }}
-      onClick={handleConfiguratorOpen}
-    >
-      <Icon fontSize="default" color="inherit">
-        settings
-      </Icon>
-    </SoftBox>
-  );
+  // Fetch the user type from the server
+  useEffect(() => {
+    async function fetchUserType() {
+      const response = await fetch('http://localhost:3001/api/usertype');
+      const data = await response.json();
+      setUser(data.userType);
+    }
+    fetchUserType();
+  }, []);
+
+  console.log(user);
+
 
   return(
     <ThemeProvider theme={theme}>
@@ -123,6 +108,7 @@ export default function App() {
       {layout === "dashboard" && (
         <>
           <Sidenav
+            user={user}
             color={sidenavColor}
             brand={brand}
             brandName="Placement Cell"
@@ -133,7 +119,6 @@ export default function App() {
           <Configurator />
         </>
       )}
-      {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />

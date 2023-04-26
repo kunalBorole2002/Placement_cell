@@ -11,7 +11,7 @@ import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
 
 
-function Bill({ id, name, company, email, vat, noGutter }) {
+function Bill({ id, name, company, email, vat, noGutter, min_marks }) {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleUpdate = async () => {
@@ -98,6 +98,14 @@ function Bill({ id, name, company, email, vat, noGutter }) {
               </SoftTypography>
             </SoftTypography>
           </SoftBox>
+          <SoftBox mb={1} lineHeight={0}>
+            <SoftTypography variant="caption" color="text">
+              Minimum Marks:&nbsp;&nbsp;&nbsp;
+              <SoftTypography variant="caption" fontWeight="medium">
+                {min_marks}
+              </SoftTypography>
+            </SoftTypography>
+          </SoftBox>
           <SoftTypography variant="caption" color="text">
             Date:&nbsp;&nbsp;&nbsp;
             <SoftTypography variant="caption" fontWeight="medium">
@@ -122,6 +130,7 @@ Bill.propTypes = {
   email: PropTypes.string.isRequired,
   vat: PropTypes.string.isRequired,
   noGutter: PropTypes.bool,
+  min_marks: PropTypes.string.isRequired
 };
 
 export default Bill;

@@ -8,8 +8,26 @@ import Icon from "@mui/material/Icon";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
+import {useEffect, useState} from "react";
 
-function Bill({ id, name, company, email, vat, noGutter }) {
+function Bill({ id, name, company, email, vat, noGutter, min_marks }) {
+  const [eligible, setEligible] = useState("eligible");
+
+  // Fetch the user type from the server
+  useEffect(() => {
+    async function fetchUserType() {
+      const response = await fetch('http://localhost:3001/api/studentmarks');
+      const data = await response.json();
+      if(data.studentMarks < min_marks){
+        setEligible("Not Eligible")
+      } else {
+        setEligible("Eligible")
+      }
+    }
+    fetchUserType();
+  }, []);
+
+
   return (
       <SoftBox
           component="li"
@@ -34,23 +52,9 @@ function Bill({ id, name, company, email, vat, noGutter }) {
               {name}
             </SoftTypography>
 
-            <SoftBox
-                display="flex"
-                alignItems="center"
-                mt={{ xs: 2, sm: 0 }}
-                ml={{ xs: -1.5, sm: 0 }}
-            >
-              <SoftBox mr={1}>
-                <SoftBox mr={1}>
-                  <SoftButton variant="text" color="error">
-                    <Icon>delete</Icon>&nbsp;delete
-                  </SoftButton>
-                </SoftBox>
-              </SoftBox>
-              <SoftButton variant="text" color="dark">
-                <Icon>edit</Icon>&nbsp;edit
-              </SoftButton>
-            </SoftBox>
+            <SoftTypography variant="body1" color="success" fontWeight="bold" textGradient= "true" >
+              {eligible}
+            </SoftTypography>
           </SoftBox>
           <SoftBox mb={1} lineHeight={0}>
             <SoftTypography variant="caption" color="text">
@@ -92,6 +96,7 @@ Bill.propTypes = {
   email: PropTypes.string.isRequired,
   vat: PropTypes.string.isRequired,
   noGutter: PropTypes.bool,
+  min_marks: PropTypes.string.isRequired
 };
 
 export default Bill;

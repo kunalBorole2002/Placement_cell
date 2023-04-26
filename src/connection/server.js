@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const {useState} = require("react");
 app.use(bodyParser.json());
+
 
 app.use(cors());
 // Connect to MongoDB
@@ -16,27 +18,12 @@ mongoose.connect('mongodb+srv://kunalborole:QAxAa5wFxk7FmwcN@cluster0.1msobqz.mo
 const userSchema = new mongoose.Schema({
     email: String,
     password: String,
+    type:String
 });
-
+let userType;
+let studentMarks;
 // Define user model
 const User = mongoose.model('User', userSchema);
-
-// Define a route for authenticating users
-app.post('/api/signin', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-
-        const user = await User.findOne({ email, password });
-        if (!user) {
-            res.status(401).json({ message: 'Invalid email or password' });
-        } else {
-            res.json(user);
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
 
 //student data
 const studentSchema = new mongoose.Schema({
@@ -47,11 +34,41 @@ const studentSchema = new mongoose.Schema({
     status: String,
     gender: String,
     marks: String,
-    password: String
+    password: String,
+    type: String
 }, { versionKey: false });
 
 // Define student model
 const Student = mongoose.model('Student', studentSchema);
+
+// Define a route for authenticating users
+app.post('/api/signin', async (req, res) => {
+    const { email, password } = req.body;
+    // Declare the userType variable outside the try-catch block
+
+    try {
+        // Look for a matching user record
+        const user = await User.findOne({ email, password });
+        if (user) {
+            userType = "admin"; // Assign the value here
+            return res.json(user);
+        }
+
+        // If not found, look for a matching student record
+        const student = await Student.findOne({ email, password });
+        if (student) {
+            studentMarks=student.marks;
+            userType = "student"; // Assign the value here
+            return res.json(student);
+        }
+
+        // If no matching records found, return error
+        res.status(401).json({ message: 'Invalid email or password' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 // Define a route for fetching all students
 app.get('/api/students', async (req, res) => {
@@ -111,6 +128,7 @@ const companySchema = new mongoose.Schema({
     date: String,
     cpackage: String,
     status: String,
+    min_marks: String,
 }, { versionKey: false });
 
 const Company = mongoose.model('Company', companySchema);
@@ -127,11 +145,29 @@ app.get('/api/companies', async (req, res) => {
     }
 });
 
+app.get('/api/usertype', async (req, res) => {
+    try {
+        res.json({ userType });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+app.get('/api/studentmarks', async (req, res) => {
+    try {
+        console.log("Student marks ",studentMarks)
+        res.json({ studentMarks });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 //insert company
 app.post('/api/companies', async (req, res) => {
     try {
-        const { name, location, date, cpackage, status } = req.body;
-        const company = new Company({ name, location, date, cpackage, status });
+        const { name, location, date, cpackage, status, min_marks } = req.body;
+        const company = new Company({ name, location, date, cpackage, status, min_marks });
         await company.save();
         // Send the updated data back to the front-end
         const companies = await Company.find();
