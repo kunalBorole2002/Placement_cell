@@ -12,6 +12,7 @@ import Socials from "layouts/authentication/components/Socials";
 import Separator from "layouts/authentication/components/Separator";
 import curved6 from "assets/images/curved-images/curved14.jpg";
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
+import { MenuItem, Select } from "@mui/material";
 
 function SignUp(){
   const [name, setName] = useState("");
@@ -23,8 +24,71 @@ function SignUp(){
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [agreement, setAgreement] = useState(true);
+  const branchOptions = ["Computer Engineering", "Mechanical Engineering", "Electrical Engineering", "ENTC", "IT", "Civil Engineering"];
+  const statusOptions = ["Placed", "Unplaced"];
+
   const handleSetAgreement = () => setAgreement(!agreement);
-  const handleSignUp = async () =>{
+
+  const isEmailValid = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  };
+
+  const isPasswordValid = (password) => {
+    // Add your password validation logic here
+    return password.length >= 6;
+  };
+
+  const isFormValid = () => {
+    if (!name.trim()) {
+      setErrorMessage("Please enter your name.");
+      return false;
+    }
+
+    if (!isEmailValid(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return false;
+    }
+
+    if (email.indexOf("@stvincentngp.edu.in") === -1) {
+      setErrorMessage("Please use your college email address.");
+      return false;
+    }
+
+    if (!gender.trim()) {
+      setErrorMessage("Please select your gender.");
+      return false;
+    }
+
+    if (!branch.trim()) {
+      setErrorMessage("Please select your branch.");
+      return false;
+    }
+
+    if (!status.trim()) {
+      setErrorMessage("Please select your placement status.");
+      return false;
+    }
+
+    if (!marks.trim() || isNaN(marks)) {
+      setErrorMessage("Please enter valid marks.");
+      return false;
+    }
+
+    if (!isPasswordValid(password)) {
+      setErrorMessage("Password should be at least 6 characters long.");
+      return false;
+    }
+
+    setErrorMessage("");
+    return true;
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault(); // add e parameter here
+    if (!isFormValid()) {
+      return;
+    }
     // make changes
     const response = await fetch('http://localhost:3001/api/signup', {
       method: 'POST',
@@ -43,32 +107,18 @@ function SignUp(){
     }
   }
 
+
   return (
     <BasicLayout
       title="Welcome!"
-      description="create new account ."
+      description="create new account "
       image={curved6}
     >
       <Card style={{ width: "500px" ,marginLeft: "-100px"}}>
         <SoftBox p={3} mb={1} textAlign="center" >
           <SoftTypography variant="h5" fontWeight="medium">
-            Register with
+            Register
           </SoftTypography>
-        </SoftBox>
-        <SoftBox mb={2} style = {{display: "flex",
-          alignItems: "center",
-          justifyContent: "center"}}>
-          {/*<Socials/>*/}
-          <GoogleOAuthProvider clientId="303527137331-g5ktm9b6u4fj9p7j5t6dvvhkk7sfgj9g.apps.googleusercontent.com">
-            <GoogleLogin
-                onSuccess={credentialResponse => {
-                  console.log(credentialResponse);
-                }}
-                onError={() => {
-                  console.log('Login Failed');
-                }}
-            />
-          </GoogleOAuthProvider>
         </SoftBox>
         <Separator />
         <SoftBox pt={2} pb={3} px={3}>
@@ -84,7 +134,7 @@ function SignUp(){
                 </SoftTypography>
               </SoftBox>
               <SoftInput
-                  placeholder="Name"
+                  placeholder="Full Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   sx={{
@@ -141,14 +191,22 @@ function SignUp(){
                 Branch
               </SoftTypography>
             </SoftBox>
-              <SoftInput
-                  placeholder="Branch"
-                  value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
-                  sx={{
-                    border: errorMessage && "1px solid red",
-                  }}
-              />
+              <Select
+                fullWidth
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value="" disabled>
+                  Branch
+                </MenuItem>
+                {branchOptions.map((branch) => (
+                  <MenuItem key={branch} value={branch} style={{marginTop:"0.4rem"}}>
+                    {branch}
+                  </MenuItem>
+                ))}
+              </Select>
+
             </SoftBox>
             <SoftBox mb={2}>
               <SoftBox mb={1} ml={0.5}>
@@ -160,14 +218,21 @@ function SignUp(){
                 Status
               </SoftTypography>
             </SoftBox>
-              <SoftInput
-                  placeholder="placed or unplaced"
-                  value={status}
-                  onChange={(e) => setPstatus(e.target.value)}
-                  sx={{
-                    border: errorMessage && "1px solid red",
-                  }}
-              />
+              <Select
+                fullWidth
+                value={status}
+                onChange={(e) => setPstatus(e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value="" disabled>
+                  Status
+                </MenuItem>
+                {statusOptions.map((status) => (
+                  <MenuItem key={status} value={status} style={{marginTop:"0.4rem"}}>
+                    {status}
+                  </MenuItem>
+                ))}
+              </Select>
             </SoftBox>
             <SoftBox mb={2}>
               <SoftBox mb={1} ml={0.5}>
@@ -202,7 +267,7 @@ function SignUp(){
                   type="password"
                   placeholder="Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value) }
                   sx={{
                     border: errorMessage && "1px solid red",
                   }}
@@ -229,12 +294,12 @@ function SignUp(){
               </SoftTypography>
             </SoftBox>
             <SoftBox mt={4} mb={1}>
-              <SoftButton variant="gradient" color="dark" fullWidth onClick={handleSignUp}>
+              <SoftButton disabled={!agreement} variant="gradient" color="dark" fullWidth onClick={handleSignUp}>
                 sign up
               </SoftButton>
             </SoftBox>
             <SoftBox mt={3} textAlign="center">
-              <SoftTypography variant="button" color="text" fontWeight="regular">
+              <SoftTypography  variant="button" color="text" fontWeight="regular">
                 Already have an account?&nbsp;
                 <SoftTypography
                   component={Link}

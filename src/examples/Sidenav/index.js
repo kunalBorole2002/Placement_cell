@@ -1,5 +1,3 @@
-
-
 import { useEffect } from "react";
 
 // react-router-dom components
@@ -26,6 +24,9 @@ import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 
+import { useNavigate } from 'react-router-dom';
+
+
 // Soft UI Dashboard React context
 import { useSoftUIController, setMiniSidenav } from "context";
 
@@ -35,8 +36,16 @@ function Sidenav({ color, brand, brandName, routes, user, ...rest }) {
   const location = useLocation();
   const { pathname } = location;
   const collapseName = pathname.split("/").slice(1)[0];
+  const navigate = useNavigate();
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  const handleSignOut = () => {
+    // Clear user session data and redirect to the sign-in page
+    localStorage.clear();
+    navigate('/authentication/sign-in', { replace: true });
+  };
+
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -59,7 +68,6 @@ function Sidenav({ color, brand, brandName, routes, user, ...rest }) {
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, route, href }) => {
     let returnValue;
-    console.log("user",user);
     // check if the user is logged in as an admin
     let isAdmin = false;
     let isStudent = false;
@@ -68,22 +76,28 @@ function Sidenav({ color, brand, brandName, routes, user, ...rest }) {
     }else if (user === 'student') {
       isStudent = true;
     }
-    console.log("admin or student ",isAdmin,isStudent);
 
     if (type === "collapse") {
       // if the link is Studentbilling and the user is an admin, hide the link
-      if (key === 'studentdashboard' && isAdmin) {
+      if (key === 'StudentComapanies' && isAdmin) {
         return null;
       }
-
+      if (key === 'StudentsProfile' && isAdmin) {
+        return null;
+      }
+      if (key === 'resume' && isAdmin) {
+        return null;
+      }
       // if the link is Dashboard and the user is a student, hide the link
       if ( name === 'Dashboard' && isStudent) {
+        return null;
+      }
+      if ( key === 'tables' && isStudent) {
         return null;
       }
       if ( key === 'billing' && isStudent) {
         return null;
       }
-
       returnValue = href ? (
           <Link
               href={href}
@@ -152,13 +166,13 @@ function Sidenav({ color, brand, brandName, routes, user, ...rest }) {
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </SoftTypography>
         </SoftBox>
-        <SoftBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <SoftBox component="img" src={brand} alt="Soft UI Logo" width="2rem" />}
+        <SoftBox display="flex" alignItems="center">
+          {brand && <SoftBox component="img" src={brand} alt="JobHive" width="2rem" />}
           <SoftBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <SoftTypography component="h6" variant="button" fontWeight="medium">
+            <SoftTypography component="h6" fontWeight="bold">
               {brandName}
             </SoftTypography>
           </SoftBox>
@@ -171,7 +185,7 @@ function Sidenav({ color, brand, brandName, routes, user, ...rest }) {
           <SoftButton
             component="a"
             target="_self"
-            href="/authentication/sign-in"
+            onClick={handleSignOut}
             rel="noreferrer"
             variant="gradient"
             color={color}

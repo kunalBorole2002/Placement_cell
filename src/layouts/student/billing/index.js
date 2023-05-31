@@ -13,7 +13,7 @@ import Footer from "examples/Footer";
 import CompanyInformation from "layouts/student/billing/components/BillingInformation";
 import Transactions from "layouts/student/billing/components/Transactions";
 
-function Studentbilling() {
+function StudentComapanies() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -33,4 +33,4 @@ function Studentbilling() {
   );
 }
 
-export default Studentbilling;
+export default StudentComapanies;

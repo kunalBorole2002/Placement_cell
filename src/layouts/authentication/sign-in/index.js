@@ -7,28 +7,32 @@ import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
+import './style.css';
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [usertype, setUser] = useState();
 
   // Fetch the user type from the server
+  const fetchUserType = async () => {
+    const response = await fetch('http://localhost:3001/api/usertype');
+    const data = await response.json();
+    setUser(data.userType);
+  };
+
   useEffect(() => {
-    async function fetchUserType() {
-      const response = await fetch('http://localhost:3001/api/usertype');
-      const data = await response.json();
-      setUser(data.userType);
-    }
     fetchUserType();
   }, []);
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
-
   const handleSignIn = async () => {
+    if(email.length === 0 || password.length === 0){
+      setErrorMessage("please enter your email and password");
+      return
+    }
     const response = await fetch('http://localhost:3001/api/signin', {
       method: 'POST',
       headers: {
@@ -44,13 +48,15 @@ function SignIn() {
       } else {
         // Check if the fetched user's email and password matches with the provided email and password
         if (user.email === email && user.password === password) {
-          console.log("login",usertype);
-          if (usertype==="admin") {
+          fetchUserType();
+          console.log("Checking",isAdmin,usertype);
+          if (isAdmin && usertype === 'admin') {
+            setUser("null");
             window.location.href = "/dashboard";
-          }else if (usertype==="student"){
-            window.location.href = "/studentBilling";
+          }else if ((!isAdmin && usertype === 'student')){
+            setUser("null");
+            window.location.href = "/StudentComapanies";
           }
-
         } else {
           setErrorMessage("Invalid email or password");
         }
@@ -60,6 +66,15 @@ function SignIn() {
     }
   };
 
+  const handleAdminClick = () => {
+    setIsAdmin(true);
+  }
+
+  const handleStudentClick = () => {
+    setIsAdmin(false);
+  }
+  console.log(isAdmin);
+
   return (
       <CoverLayout
           title="Welcome back"
@@ -68,6 +83,10 @@ function SignIn() {
       >
         <SoftBox component="form" role="form">
           <SoftBox mb={2}>
+            <div className="button-group">
+              <button type="button" className={isAdmin ? "admin-button active" : "admin-button"} onClick={handleAdminClick}>Admin</button>
+              <button type="button" className={!isAdmin ? "student-button active" : "student-button"} onClick={handleStudentClick}>Student</button>
+            </div>
             <SoftBox mb={1} ml={0.5}>
               <SoftTypography
                   component="label"
@@ -118,17 +137,6 @@ function SignIn() {
                 {errorMessage}
               </SoftTypography>
           )}
-          <SoftBox display="flex" alignItems="center">
-            <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-            <SoftTypography
-                variant="button"
-                fontWeight="regular"
-                onClick={handleSetRememberMe}
-                sx={{ cursor: "pointer", userSelect: "none" }}
-            >
-              Remember me
-            </SoftTypography>
-          </SoftBox>
           <SoftBox mt={4} mb={1}>
             <SoftButton
                 variant="gradient"

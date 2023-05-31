@@ -1,0 +1,40 @@
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; /* Added transition property */
+    box-shadow: 10px 10px 20px #d1d9e6, -10px -10px 20px #f6fafd, 5px 5px 10px #d1d9e6, -5px -5px 10px #f6fafd;
+    background-color: #f0f2f5; /* Changed background to background-color */
+    color: #0a0c10;
+    margin: 0 10px;
+}
+
+.admin-button {
+    background-color: #f0f2f5;
+    color: #0a0c10;
+}
+
+.student-button {
+    background-color: #f0f2f5;
+    color: #0a0c10;
+}
+
+.admin-button.active {
+    background: linear-gradient(to bottom right, #5C258D, #4389A2); /* Changed gradient to background */
+    color: #f0f2f5;
+    box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #f6fafd;
+}
+
+.student-button.active {
+    background: linear-gradient(to bottom right, #5C258D, #4389A2); /* Changed gradient to background */
+    color: #f0f2f5;
+    box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #f6fafd;
+}

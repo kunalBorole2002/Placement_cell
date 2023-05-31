@@ -99,8 +99,6 @@ export default function App() {
     fetchUserType();
   }, []);
 
-  console.log(user);
-
 
   return(
     <ThemeProvider theme={theme}>
@@ -111,7 +109,7 @@ export default function App() {
             user={user}
             color={sidenavColor}
             brand={brand}
-            brandName="Placement Cell"
+            brandName="JobHive"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}

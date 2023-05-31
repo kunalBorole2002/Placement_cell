@@ -1,19 +1,19 @@
+import DashboardIcon from '@material-ui/icons/Assessment';
+import StudentComapaniesIcon from '@material-ui/icons/Business';
+import StudentsIcon from '@material-ui/icons/Group';
+import StudentsProfileIcon from '@material-ui/icons/AccountCircle';
+import ResumeIcon from '@material-ui/icons/Description';
+import SignInIcon from '@material-ui/icons/Lock';
+import SignUpIcon from '@material-ui/icons/PersonAdd';
+
 import Dashboard from "layouts/dashboard";
-import Studentbilling from "layouts/student/billing";
+import StudentComapanies from "layouts/student/billing";
 import Students from "layouts/tables";
 import Billing from "layouts/billing";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
-
-// Soft UI Dashboard React icons
-import Shop from "examples/Icons/Shop";
-import Office from "examples/Icons/Office";
-import Settings from "examples/Icons/Settings";
-import Document from "examples/Icons/Document";
-import SpaceShip from "examples/Icons/SpaceShip";
-import CustomerSupport from "examples/Icons/CustomerSupport";
-import CreditCard from "examples/Icons/CreditCard";
-import Cube from "examples/Icons/Cube";
+import StudentsProfile from "layouts/student/tables"
+import Resume from "layouts/student/resume"
 
 const routes = [
   {
@@ -21,16 +21,17 @@ const routes = [
     name: "Dashboard",
     key: "dashboard",
     route: "/dashboard",
-    icon: <Shop size="12px" />,
+    icon: <DashboardIcon />,
     component: <Dashboard />,
     noCollapse: true,
-  },  {
+  },
+  {
     type: "collapse",
-    name: "Companies",
-    key: "studentdashboard",
-    route: "/studentBilling",
-    icon: <Shop size="12px" />,
-    component: <Studentbilling />,
+    name: "Comapanies",
+    key: "StudentComapanies",
+    route: "/StudentComapanies",
+    icon: <StudentComapaniesIcon />,
+    component: <StudentComapanies />,
     noCollapse: true,
   },
   {
@@ -38,8 +39,17 @@ const routes = [
     name: "Students",
     key: "tables",
     route: "/tables",
-    icon: <Office size="12px" />,
+    icon: <StudentsIcon />,
     component: <Students />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Profile",
+    key: "StudentsProfile",
+    route: "/StudentsProfile",
+    icon: <StudentsProfileIcon />,
+    component: <StudentsProfile />,
     noCollapse: true,
   },
   {
@@ -47,15 +57,24 @@ const routes = [
     name: "Companies",
     key: "billing",
     route: "/billing",
-    icon: <CreditCard size="12px" />,
+    icon: <StudentComapaniesIcon />,
     component: <Billing />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Resume",
+    key: "resume",
+    route: "/resume",
+    icon: <ResumeIcon />,
+    component: <Resume />,
     noCollapse: true,
   },
   {
     name: "Sign In",
     key: "sign-in",
     route: "/authentication/sign-in",
-    icon: <Document size="12px" />,
+    icon: <SignInIcon />,
     component: <SignIn />,
     noCollapse: true,
   },
@@ -63,7 +82,7 @@ const routes = [
     name: "Sign Up",
     key: "sign-up",
     route: "/authentication/sign-up",
-    icon: <SpaceShip size="12px" />,
+    icon: <SignUpIcon />,
     component: <SignUp />,
     noCollapse: true,
   },

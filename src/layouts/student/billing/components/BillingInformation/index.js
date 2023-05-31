@@ -1,5 +1,5 @@
-// @mui material components
 import Card from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useState } from "react";
 
 // Soft UI Dashboard React components
@@ -11,13 +11,39 @@ import Bill from "layouts/student/billing/components/Bill";
 
 function CompanyInformation() {
     const [companies, setCompanies] = useState([]);
+    const [student, setStudent] = useState();
+    const [studentb, setStudentb] = useState();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:3001/api/activecompanies")
-            .then((res) => res.json())
-            .then((data) => setCompanies(data))
-            .catch((error) => console.error(error));
+        Promise.all([
+            fetch("http://localhost:3001/api/activecompanies"),
+            fetch("http://localhost:3001/api/studentmarks")
+        ])
+            .then((responses) => {
+                return Promise.all(responses.map((response) => response.json()));
+            })
+            .then((data) => {
+                setCompanies(data[0]);
+                setStudent(data[1].student[0].marks);
+                setStudentb(data[1].student[0].branch);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                setIsLoading(false);
+            });
     }, []);
+
+    if (isLoading) {
+        return (
+            <Card id="delete-account">
+                <SoftBox display="flex" alignItems="center" justifyContent="center" height={200}>
+                    <CircularProgress />
+                </SoftBox>
+            </Card>
+        );
+    }
 
     return (
         <Card id="delete-account">
@@ -31,11 +57,14 @@ function CompanyInformation() {
                     {companies.map((company) => (
                         <Bill
                             key={company._id}
-                            id = {company._id}
+                            id={company._id}
                             name={company.name}
                             company={company.cpackage}
                             email={company.location}
-                            min_marks={company.min_marks}
+                            minmarks={company.min_marks}
+                            studentmarks={student}
+                            studentbr = {studentb}
+                            cpbranch = {company.pbranch}
                             vat={company.date}
                         />
                     ))}
